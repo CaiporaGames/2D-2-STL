@@ -7,6 +7,9 @@ export function UploadPanel({ fileName, onUpload }: UploadPanelProps) {
   return (
     <section className="rounded-2xl border p-4">
       <h2 className="text-lg font-semibold">Carregar imagem</h2>
+      <p className="mt-2 text-sm text-gray-600">
+        Usa SVG ou PNG com fundo transparente ou alto contraste.
+      </p>
 
       <input
         className="mt-4"

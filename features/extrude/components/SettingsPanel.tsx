@@ -49,13 +49,22 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
       />
 
       <Slider
-        label="Escala"
-        value={settings.scale}
-        min={0.2}
-        max={5}
-        step={0.1}
-        onChange={(value) => onChange("scale", value)}
+        label="Limite PNG"
+        value={settings.pngThreshold}
+        min={0}
+        max={255}
+        step={1}
+        onChange={(value) => onChange("pngThreshold", value)}
       />
+
+      <label className="mt-4 flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={settings.pngInvert}
+          onChange={(event) => onChange("pngInvert", event.target.checked)}
+        />
+        Inverter PNG
+      </label>
     </section>
   );
 }

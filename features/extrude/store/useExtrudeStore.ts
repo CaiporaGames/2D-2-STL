@@ -25,8 +25,10 @@ const defaultSettings: ExtrudeSettings = {
   thickness: 3,
   bevel: 0.2,
   smoothing: 2,
-  scale: 1,
   targetWidthMm: 60,
+
+  pngThreshold: 180,
+  pngInvert: false,
 };
 
 export const useExtrudeStore = create<ExtrudeState>()((set) => ({

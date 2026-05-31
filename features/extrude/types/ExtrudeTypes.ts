@@ -5,14 +5,17 @@ export type UploadedFileInfo = {
   type: "svg" | "png" | "unknown";
   size: number;
   content?: string;
+  originalFile?: File;
 };
 
 export type ExtrudeSettings = {
   thickness: number;
   bevel: number;
   smoothing: number;
-  scale: number;
   targetWidthMm: number;
+
+  pngThreshold: number;
+  pngInvert: boolean;
 };
 
 export type ExtrudeModel = {

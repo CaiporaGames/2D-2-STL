@@ -25,6 +25,8 @@ export class SvgExtrudeService {
     const geometries: THREE.BufferGeometry[] = [];
 
     for (const path of svgData.paths) {
+      if (!shouldExtrudePath(path)) continue;
+
       const shapes = SVGLoader.createShapes(path);
 
       for (const shape of shapes) {
@@ -60,7 +62,7 @@ export class SvgExtrudeService {
 
     if (width > 0) {
         const scaleToMm = settings.targetWidthMm / width;
-        const finalScale = scaleToMm * settings.scale;
+        const finalScale = scaleToMm;
 
         mergedGeometry.scale(finalScale, -finalScale, finalScale);
     }
@@ -146,4 +148,22 @@ function mergeGeometriesSimple(
   }
 
   return merged;
+}
+function shouldExtrudePath(path: any): boolean {
+  const style = path.userData?.style;
+
+  if (style?.fill === "none") return false;
+
+  const fillOpacity = Number(style?.fillOpacity ?? style?.opacity ?? 1);
+
+  if (fillOpacity <= 0.01) return false;
+
+  const color = path.color;
+
+  if (!color) return true;
+
+  const brightness = (color.r + color.g + color.b) / 3;
+
+  // Keep dark paths, ignore white/light background.
+  return brightness < 0.5;
 }

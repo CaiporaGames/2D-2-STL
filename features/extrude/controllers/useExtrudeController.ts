@@ -2,6 +2,7 @@ import { useExtrudeStore } from "../store/useExtrudeStore";
 import { SvgExtrudeService } from "../services/SvgExtrudeService";
 import { StlExportService } from "../services/StlExportService";
 import type { UploadedFileInfo } from "../types/ExtrudeTypes";
+import { PngTraceService } from "../services/PngTraceService";
 
 export function useExtrudeController() {
   const {
@@ -19,50 +20,80 @@ export function useExtrudeController() {
   async function uploadFile(file: File) {
     const extension = file.name.split(".").pop()?.toLowerCase();
 
-    const fileInfo: UploadedFileInfo = {
-      name: file.name,
-      type:
-        extension === "svg"
-          ? "svg"
-          : extension === "png"
-          ? "png"
-          : "unknown",
-      size: file.size,
-      content: extension === "svg" ? await file.text() : undefined,
-    };
-
-    if (fileInfo.type === "unknown") {
+    if (extension !== "svg" && extension !== "png") {
       setError("Formato não suportado. Usa SVG ou PNG.");
       return;
     }
 
-    if (fileInfo.type === "png") {
-      setError("PNG será suportado no próximo passo. Por agora usa SVG.");
-      return;
+    try {
+      let content: string | undefined;
+
+      if (extension === "svg") {
+        content = await file.text();
+      }
+
+      if (extension === "png") {
+        content = await PngTraceService.pngFileToSvgText(file, settings);
+      }
+
+      const fileInfo: UploadedFileInfo = {
+        name: file.name,
+        type: extension,
+        size: file.size,
+        content,
+        originalFile: file,
+      };
+
+      setError(null);
+      setFile(fileInfo);
+
+      const generatedModel = SvgExtrudeService.generateModel(fileInfo, settings);
+      setModel(generatedModel);
+    } catch {
+      setError("Não foi possível converter a imagem.");
     }
-
-    setError(null);
-    setFile(fileInfo);
-
-    const generatedModel = SvgExtrudeService.generateModel(fileInfo, settings);
-    setModel(generatedModel);
   }
-
-  function updateSetting<K extends keyof typeof settings>(
+  async function updateSetting<K extends keyof typeof settings>(
     key: K,
     value: (typeof settings)[K]
   ) {
     setSetting(key, value);
 
-    if (!file || file.type !== "svg") return;
+    if (!file) return;
 
     const nextSettings = {
       ...settings,
       [key]: value,
     };
 
-    const generatedModel = SvgExtrudeService.generateModel(file, nextSettings);
-    setModel(generatedModel);
+    try {
+      let nextContent = file.content;
+
+      if (file.type === "png" && file.originalFile) {
+        nextContent = await PngTraceService.pngFileToSvgText(
+          file.originalFile,
+          nextSettings
+        );
+
+        setFile({
+          ...file,
+          content: nextContent,
+        });
+      }
+
+      const generatedModel = SvgExtrudeService.generateModel(
+        {
+          ...file,
+          content: nextContent,
+        },
+        nextSettings
+      );
+
+      setModel(generatedModel);
+      setError(null);
+    } catch {
+      setError("Não foi possível atualizar o modelo.");
+    }
   }
 
   function exportStl() {
