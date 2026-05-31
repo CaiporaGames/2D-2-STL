@@ -10,11 +10,11 @@ export default function HomePage() {
   const controller = useExtrudeController();
 
   return (
-    <main className="min-h-screen bg-white p-6">
+    <main className="min-h-screen bg-white p-6 text-slate-900">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8">
           <h1 className="text-4xl font-bold">2D para 3D</h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-sm text-slate-600">
             Transforma imagens simples em ficheiros STL para impressão 3D.
           </p>
         </header>

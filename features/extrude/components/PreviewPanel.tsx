@@ -13,7 +13,8 @@ export function PreviewPanel({ model }: PreviewPanelProps) {
     <section className="min-h-[500px] rounded-2xl border bg-gray-50">
       {model.status === "empty" && (
         <div className="flex h-[500px] items-center justify-center">
-          <p className="text-gray-500">
+          <p className="text-slate-600">
+            
             Carrega um SVG para ver a pré-visualização 3D.
           </p>
         </div>

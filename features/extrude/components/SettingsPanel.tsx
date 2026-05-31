@@ -10,8 +10,8 @@ type SettingsPanelProps = {
 
 export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
   return (
-    <section className="rounded-2xl border p-4">
-      <h2 className="text-lg font-semibold">Definições</h2>
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 text-slate-900">
+      <h2 className="text-lg font-semibold text-slate-900">Definições</h2>
 
         <Slider
             label="Largura final em mm"
